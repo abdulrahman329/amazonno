@@ -62,115 +62,59 @@
                     action="{{ route('products.update', $product->id) }}"
                     method="PUT"
                     class="p-6 sm:p-8">
-                    @csrf
-                    @method('PUT')
 
                     {{-- Name --}}
-                    <div class="mb-6">
-                        <label for="name"
-                                class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                            Product Name
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            value="{{ old('name', $product->name) }}"
-                            placeholder="Enter product name"
-                            required
-                            class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-amber-400"
-                        >
-
-                        @error('name')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-ui.form-field
+                        label="Product Name"
+                        name="name"
+                        placeholder="Enter product name"
+                        value="{{ old('name', $product->name) }}"
+                        required
+                        autofocus
+                    />
 
                     {{-- Description --}}
-                    <div class="mb-6">
-                        <label for="description"
-                                class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                            Description
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <textarea
-                            name="description"
-                            id="description"
-                            rows="5"
-                            placeholder="Describe your product..."
-                            required
-                            class="w-full resize-y rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-amber-400"
-                        >{{ old('description', $product->description) }}</textarea>
-
-                        @error('description')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <x-ui.form-field
+                        label="Description"
+                        name="description"
+                        type="textarea"
+                        value="{{ old('description', $product->description) }}"
+                        rows="4"
+                        placeholder="Describe your product..."
+                        required
+                    />
 
                     {{-- Price & Stock --}}
                     <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
 
                     {{-- Price --}}
                         <div>
-                            <label for="price"
-                                    class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                                Price
-                                <span class="text-red-500">*</span>
-                            </label>
-
-                            <div class="relative">
-                                <input
-                                    type="number"
-                                    name="price"
-                                    id="price"
-                                    min="0"
-                                    step="0.01"
-                                    value="{{ old('price', $product->price) }}"
-                                    placeholder="0.00"
-                                    required
-                                    class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-amber-400"
-                                >
-                            </div>
-
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                Enter the product price.
-                            </p>
-
-                            @error('price')
-                                <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
+                            <x-ui.form-field
+                                label="Price"
+                                name="price"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value="{{ old('price', $product->price) }}"
+                                placeholder="0.00"
+                                hint="Enter the product price."
+                                required
+                            />
                         </div>
 
                         {{-- Stock --}}
                         <div>
-                            <label for="stock"
-                                    class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                                Stock Quantity
-                                <span class="text-red-500">*</span>
-                            </label>
-
-                            <input
-                                type="number"
+                            <x-ui.form-field
+                                label="stock Quantity"
                                 name="stock"
-                                id="stock"
+                                type="number"
                                 min="0"
                                 step="1"
                                 value="{{ old('stock', $product->stock) }}"
                                 placeholder="0"
+                                hint="Number of available items."
                                 required
-                                class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:focus:border-amber-400"
-                            >
-
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                Number of available items.
-                            </p>
-
-                            @error('stock')
-                                <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
+                            />
                         </div>
                     </div>
                     
@@ -201,6 +145,7 @@
 
                     </div>
 
+                </x-ui.form>
             </div>
             
             <p class="mt-4 text-center text-xs text-gray-400 dark:text-gray-500">
