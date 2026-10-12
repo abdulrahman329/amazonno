@@ -1,14 +1,10 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div class="flex flex-col gap-1">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Edit Product
-            </h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-                Update your product information
-            </p>
-        </div>
+        <x-ui.layout.page-header
+            title="Edit Product"
+            description="Update your product information"
+        />
     </x-slot>
 
     <div class="min-h-screen bg-gray-50 py-10 dark:bg-gray-900">
@@ -116,6 +112,7 @@
                     {{-- Price & Stock --}}
                     <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
 
+                    {{-- Price --}}
                         <div>
                             <label for="price"
                                     class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
@@ -146,6 +143,7 @@
                             @enderror
                         </div>
 
+                        {{-- Stock --}}
                         <div>
                             <label for="stock"
                                     class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
@@ -173,9 +171,8 @@
                                 <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
-
                     </div>
-
+                    
                     {{-- Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
 
@@ -198,20 +195,17 @@
                                     stroke-linejoin="round"
                                     d="m4.5 12.75 6 6 9-13.5" />
                             </svg>
-
                             Save Changes
                         </button>
 
                     </div>
-
                 </form>
             </div>
-
+            
             <p class="mt-4 text-center text-xs text-gray-400 dark:text-gray-500">
                 Fields marked with <span class="text-red-500">*</span> are required.
             </p>
-
+            
         </div>
     </div>
-
 </x-app-layout>

@@ -1,14 +1,10 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Create Product
-            </h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                Add a new product to your store
-            </p>
-        </div>
+        <x-ui.layout.page-header
+            title="Create Product"
+            description="Add a new product to your store"
+        />
     </x-slot>
 
     <div class="min-h-screen bg-gray-50 py-10 dark:bg-gray-900">
@@ -206,12 +202,11 @@
 
                 </form>
             </div>
-
+            
             <p class="mt-4 text-center text-xs text-gray-400 dark:text-gray-500">
                 Fields marked with <span class="text-red-500">*</span> are required.
             </p>
-
+        
         </div>
     </div>
-
 </x-app-layout>
