@@ -2,11 +2,12 @@
 
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-<<<<<<< HEAD
 
-=======
->>>>>>> 5801841e96a71de7fe1bcf7f489deac567df2a20
             <a href="{{ route('products.create') }}"
+        <x-ui.layout.page-header
+                title="Products"
+                description="Manage your store products"
+            />
                 class="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 sm:mt-0">
                 <svg xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 24 24"
@@ -16,14 +17,6 @@
                         stroke-linejoin="round"
                         d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-            <x-ui.layout.page-header
-                title="Products"
-                description="Manage your store products"
-            />
-<<<<<<< HEAD
-        
-=======
->>>>>>> 5801841e96a71de7fe1bcf7f489deac567df2a20
                 Add Product
             </a>
         </div>
@@ -130,16 +123,13 @@
                                 </svg>
                                 Edit
                             </a>
-
-                            <form action="{{ route('products.destroy', $product->id) }}"
-                                method="POST"
-                                class="flex-1"
-                                onsubmit="return confirm('Are you sure you want to delete this product?')">
-                                @csrf
-                                @method('DELETE')
-
                                 <button type="submit"
                                         class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20">
+                        
+                            <x-ui.form 
+                            action="{{ route('products.destroy', $product->id) }}"
+                            method="DELETE"
+                            class="inline-flex flex-1">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor"
@@ -150,8 +140,7 @@
                                     </svg>
                                     Delete
                                 </button>
-                            </form>
-
+                            </x-ui.form>
                         </div>
                     </div>
                 </div>
@@ -177,7 +166,7 @@
                     <h3 class="mt-5 text-lg font-bold text-gray-900 dark:text-white">
                         No products yet
                     </h3>
-
+                    
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         Start building your store by adding your first product.
                     </p>
@@ -187,15 +176,13 @@
                         Add Your First Product
                     </a>
                 </div>
-
+            
             @endforelse
 
             {{-- Pagination --}}
             <div class="mt-8">
                 {{ $products->appends(request()->query())->links() }}
             </div>
-
         </div>
     </div>
-
 </x-app-layout>

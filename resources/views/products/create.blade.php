@@ -57,8 +57,9 @@
                 </div>
 
                 {{-- Form --}}
-                <form action="{{ route('products.store') }}"
-                    method="POST"
+                <x-ui.form 
+                    action="{{ route('products.store') }}" 
+                    method="POST" 
                     class="p-6 sm:p-8">
 
                     @csrf
@@ -200,7 +201,7 @@
 
                     </div>
 
-                </form>
+                    </x-ui.form>
             </div>
             
             <p class="mt-4 text-center text-xs text-gray-400 dark:text-gray-500">

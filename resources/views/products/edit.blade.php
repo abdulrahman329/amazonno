@@ -58,8 +58,9 @@
                 </div>
 
                 {{-- Form --}}
-                <form action="{{ route('products.update', $product->id) }}"
-                    method="POST"
+                <x-ui.form 
+                    action="{{ route('products.update', $product->id) }}"
+                    method="PUT"
                     class="p-6 sm:p-8">
                     @csrf
                     @method('PUT')
@@ -199,7 +200,7 @@
                         </button>
 
                     </div>
-                </form>
+
             </div>
             
             <p class="mt-4 text-center text-xs text-gray-400 dark:text-gray-500">
