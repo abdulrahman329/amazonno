@@ -3,11 +3,12 @@
     <x-slot name="header">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
 
-            <a href="{{ route('products.create') }}"
         <x-ui.layout.page-header
                 title="Products"
                 description="Manage your store products"
             />
+            <x-ui.button
+                href="{{ route('products.create') }}"
                 class="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 sm:mt-0">
                 <svg xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 24 24"
@@ -18,7 +19,7 @@
                         d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
                 Add Product
-            </a>
+            </x-ui.button>
         </div>
     </x-slot>
 
@@ -107,29 +108,30 @@
 
                         {{-- Actions --}}
                         <div class="mt-6 flex gap-3 border-t border-gray-100 pt-4 dark:border-gray-700">
-
-                            <a href="{{ route('products.edit', $product->id) }}"
-                                class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-50 px-3 py-2.5 text-sm font-semibold text-amber-700 transition hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.8" stroke="currentColor"
-                                    class="h-4 w-4">
-                                    <path stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
-                                    <path stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                </svg>
+                        
+                            <x-ui.button 
+                                href="{{ route('products.edit', $product->id) }}"
+                                variant="edit"
+                                class="inline-flex flex-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.8" stroke="currentColor"
+                                        class="h-4 w-4">
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                                        <path stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                    </svg>
                                 Edit
-                            </a>
-                                <button type="submit"
-                                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20">
+                            </x-ui.button>
                         
                             <x-ui.form 
                             action="{{ route('products.destroy', $product->id) }}"
                             method="DELETE"
                             class="inline-flex flex-1">
+                                <x-ui.button type="submit" variant="danger" class="w-full">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor"
@@ -139,7 +141,7 @@
                                             d="m14.74 9-.346 9m-5.788 0L8.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L17.16 19.673A2.25 2.25 0 0 1 14.916 21H9.084a2.25 2.25 0 0 1-2.244-1.327L5.772 5.79m12.456 0a48.108 48.108 0 0 0-3.478-.397m-12.456 0c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.956 0V4.5A2.25 2.25 0 0 0 12.5 2.25h-1A2.25 2.25 0 0 0 9.25 4.5v.728m6.5 0a48.667 48.667 0 0 0-6.5 0" />
                                     </svg>
                                     Delete
-                                </button>
+                                </x-ui.button>
                             </x-ui.form>
                         </div>
                     </div>
@@ -170,11 +172,12 @@
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         Start building your store by adding your first product.
                     </p>
-
-                    <a href="{{ route('products.create') }}"
-                        class="mt-6 inline-flex items-center justify-center rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-600">
-                        Add Your First Product
-                    </a>
+                    
+                    <x-ui.button 
+                        href="{{ route('products.create') }}"
+                        variant="warning">
+                            Add Your First Product
+                    </x-ui.button>
                 </div>
             
             @endforelse

@@ -121,15 +121,16 @@
                     {{-- Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
 
-                        <a href="{{ route('products.index') }}"
-                            class="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
-                            Cancel
-                        </a>
-
-                        <button
+                        <x-ui.button 
+                            href="{{ route('products.index') }}"
+                            variant="Cancel">
+                                Cancel
+                        </x-ui.button>
+                        
+                        <x-ui.button
                             type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-600 focus:outline-none focus:ring-4 focus:ring-amber-500/30 active:scale-[0.98]"
-                        >
+                            variant="warning"                            
+                            >
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -141,8 +142,7 @@
                                     d="m4.5 12.75 6 6 9-13.5" />
                             </svg>
                             Save Changes
-                        </button>
-
+                        </x-ui.button>
                     </div>
 
                 </x-ui.form>
