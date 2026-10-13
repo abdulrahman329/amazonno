@@ -84,6 +84,19 @@
                         required
                     />
 
+                    {{-- Category --}}
+                    <x-ui.form-field
+                            label="Category"
+                            name="category_id"
+                            type="select"
+                            :options="$categories"
+                            option-value="id"
+                            option-label="name"
+                            :value="$product->category_id"                            
+                            placeholder="Choose a category"
+                            required
+                        />
+
                     {{-- Price & Stock --}}
                     <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
 
