@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
@@ -14,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('user')
+        $products = Product::with('user', 'category')
         ->latest()
         ->paginate(8);
     
@@ -27,7 +28,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $categories = Category::orderBy('name')->get();
+        
+        return view('products.create', compact('categories'));
     }
 
     /**
@@ -36,11 +39,11 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $validatedData = $request->validated();
-
+        
         $validatedData['user_id'] = auth()->id();
-
+        
         Product::create($validatedData);
-
+        
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
@@ -57,7 +60,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $categories = Category::orderBy('name')->get();
+
+        return view('products.edit', compact('product', 'categories'));
     }
 
     /**
