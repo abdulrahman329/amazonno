@@ -77,10 +77,10 @@
                     {{-- Product Details --}}
                     <div class="flex flex-1 flex-col p-5">
 
-                        <h4 class="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white"
-                            title="{{ $product->name }}">
-                            {{ $product->name }}
-                        </h4>
+                    <h4 class="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white"
+                        title="{{ $product->name }}">
+                        {{ $product->name }}
+                    </h4>
 
                         <p class="mt-2 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-gray-500 dark:text-gray-400">
                             {{ $product->description }}
@@ -144,6 +144,18 @@
                                 </x-ui.button>
                             </x-ui.form>
                         </div>
+                        
+                        {{-- Category --}}
+                        <div class="pt-4 justify-end text-right">
+                            <span class="inline-flex items-center gap-1.5 rounded-full
+                                bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700
+                                ring-1 ring-inset ring-amber-600/20
+                                dark:bg-amber-500/10 dark:text-amber-400
+                                dark:ring-amber-400/20">
+
+                                {{ $product->category?->name ?? 'Uncategorized' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -168,8 +180,8 @@
                     <h3 class="mt-5 text-lg font-bold text-gray-900 dark:text-white">
                         No products yet
                     </h3>
-                    
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+
+                    <p class="mt-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
                         Start building your store by adding your first product.
                     </p>
                     
