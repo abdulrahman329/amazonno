@@ -54,6 +54,9 @@
 
                 <div class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
 
+                    <x-ui.button
+                        href="{{ route('products.show', $product->id) }}" variant="empty">
+
                     {{-- Product Image Placeholder --}}
                     <div class="relative flex h-48 items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700/50">
 
@@ -166,6 +169,7 @@
 
                                 {{ $product->category?->name ?? 'Uncategorized' }}
                             </span>
+                            </x-ui.button>
                         </div>
                     </div>
                 </div>
