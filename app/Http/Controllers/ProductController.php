@@ -40,6 +40,10 @@ class ProductController extends Controller
     {
         $validatedData = $request->validated();
         
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = storeImage($request->file('image'));
+        }
+
         $validatedData['user_id'] = auth()->id();
         
         Product::create($validatedData);
@@ -72,7 +76,20 @@ class ProductController extends Controller
     {
         $validatedData = $request->validated();
 
-        $product->update($validatedData);
+        if ($request->hasFile('image')) {
+        
+            // Store the new image and get the path
+            $oldImage = $product->getRawOriginal('image');
+            
+            // Store the new image and update the validated data with the new image path
+            $validatedData['image'] = storeImage($request->file('image'));
+            
+            $product->update($validatedData);  // if this throws, we stop here —
+                // old file is still intact, nothing broken
+                deleteImage($oldImage); // only reached if the update succeeded
+            } else {
+                $product->update($validatedData);
+            }
         
         return redirect()->route('products.index')->with('success', 'Product Updateed successfully.');
     }
