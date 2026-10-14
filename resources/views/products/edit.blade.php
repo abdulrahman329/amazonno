@@ -130,6 +130,28 @@
                             />
                         </div>
                     </div>
+                    {{-- Change Product Image --}}
+                    <x-ui.form-field
+                        label="Change Product Image"
+                        name="image"
+                        type="file"
+                        hint="Choose a new image if you want to replace the current one. Maximum size: 2 MB."
+                    />
+                    {{-- Current Product Image --}}
+                    @if ($product->image)
+                        <div class="mb-6">
+                            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                Current Product Image
+                            </label>
+
+                            <img
+                                src="{{ asset('storage/' . $product->image) }}"
+                                alt="{{ $product->name }}"
+                                class=" h-28 w-28 rounded-xl border border-gray-200 object-cover
+                                    dark:border-gray-700"
+                            >
+                        </div>
+                    @endif
                     
                     {{-- Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">

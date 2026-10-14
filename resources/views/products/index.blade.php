@@ -56,15 +56,26 @@
 
                     {{-- Product Image Placeholder --}}
                     <div class="relative flex h-48 items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700/50">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 24 24"
-                            stroke-width="1"
-                            stroke="currentColor"
-                            class="h-20 w-20 text-gray-300 transition duration-300 group-hover:scale-110 dark:text-gray-600">
-                            <path stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25m0-9L3 7.5m9 5.25v9m-9-14.25v9l9 5.25" />
-                        </svg>
+
+                        @if ($product->image)
+                            <img
+                                src="{{ asset('storage/' . $product->image) }}"
+                                alt="{{ $product->name }}"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                            >
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="currentColor"
+                                class="h-20 w-20 text-gray-300 dark:text-gray-600">
+
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25m0-9L3 7.5m9 5.25v9m-9-14.25v9l9 5.25" />
+                            </svg>
+                        @endif
 
                         <span class="absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-semibold
                             {{ $product->stock > 0

@@ -6,6 +6,7 @@
 <form
     action="{{ $action }}"
     method="{{ strtoupper($method) === 'GET' ? 'GET' : 'POST' }}"
+    enctype="multipart/form-data"
     {{ $attributes->merge(['class' => '']) }}>
 
     @if(strtoupper($method) !== 'GET')

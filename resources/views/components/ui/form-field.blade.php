@@ -60,7 +60,25 @@
                 </option>
             @endforeach
         </select>
-
+        @elseif ($type === 'file')
+    <input
+        {{ $attributes->class([
+            'block w-full rounded-xl border border-gray-300
+            bg-white text-sm text-gray-900
+            file:mr-4 file:rounded-l-xl file:border-0
+            file:bg-amber-50 file:px-4 file:py-3
+            file:font-semibold file:text-amber-700
+            hover:file:bg-amber-100
+            dark:border-gray-600 dark:bg-gray-900
+            dark:text-white',
+        ]) }}
+        type="file"
+        name="{{ $name }}"
+        id="{{ $name }}"
+        accept="image/jpeg,image/png,image/jpg,image/gif"
+        @if ($required) required @endif
+    >
+    
     @else
         <input
             {{ $attributes->class([

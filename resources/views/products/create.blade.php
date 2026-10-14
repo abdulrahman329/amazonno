@@ -129,6 +129,15 @@
                                 />
                             </div>
                         </div>
+
+                        {{-- Product Image --}}
+                        <x-ui.form-field
+                            label="Product Image"
+                            name="image"
+                            type="file"
+                            hint="Upload a JPG, JPEG, PNG, or GIF image (max 2 MB)."
+                            required
+                        /> 
                         
                         {{-- Actions --}}
                         <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
