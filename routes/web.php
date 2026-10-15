@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,6 +21,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    route::resource('products', ProductController::class);
-    route::resource('categories', CategoryController::class)->except(['show']);
+    route::resource('products', ProductController::class)->except(['index', 'show']);
+
+    
+    Route::middleware(['role:admin'])->group(function () {
+
+        Route::resource('categories', CategoryController::class)->except('show');
+
+    });
+
 });
+
+route::resource('products', ProductController::class)->only(['index', 'show']);
