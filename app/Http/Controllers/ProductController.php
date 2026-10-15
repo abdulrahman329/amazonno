@@ -7,9 +7,12 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -28,6 +31,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Product::class); 
+
         $categories = Category::orderBy('name')->get();
         
         return view('products.create', compact('categories'));
@@ -43,6 +48,16 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $validatedData['image'] = storeImage($request->file('image'));
         }
+
+        //     $images = [];
+
+        // if ($request->hasFile('images')) {
+        //     foreach ($request->file('images') as $image) {
+        //         $images[] = storeImage($image, 'products');
+        //     }
+        // }
+
+        // $validatedData['images'] = $images;
 
         $validatedData['user_id'] = auth()->id();
         
@@ -66,6 +81,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $this->authorize('update', $product); 
+
         $categories = Category::orderBy('name')->get();
 
         return view('products.edit', compact('product', 'categories'));
@@ -101,7 +118,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product); 
+
+        $imagepath = $product->getRawOriginal('image');
+
         $product->delete();
+
+        deleteImage($imagepath);
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
