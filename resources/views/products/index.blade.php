@@ -123,7 +123,8 @@
                         {{-- Actions --}}
                         <div class="mt-6 flex gap-3 border-t border-gray-100 pt-4 dark:border-gray-700">
                         
-                            <x-ui.button 
+                        @can('update', $product)
+                        <x-ui.button 
                                 href="{{ route('products.edit', $product->id) }}"
                                 variant="edit"
                                 class="inline-flex flex-1">
@@ -140,7 +141,9 @@
                                     </svg>
                                 Edit
                             </x-ui.button>
+                            @endcan
                         
+                            @can('delete', $product)
                             <x-ui.form 
                             action="{{ route('products.destroy', $product->id) }}"
                             method="DELETE"
@@ -156,6 +159,7 @@
                                     </svg>
                                     Delete
                                 </x-ui.button>
+                                @endcan
                             </x-ui.form>
                         </div>
                         

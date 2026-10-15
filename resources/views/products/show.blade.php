@@ -214,6 +214,7 @@
                         Back to Products
                     </x-ui.button>
 
+                    @can('update', $product)
                     <x-ui.button
                         href="{{ route('products.edit', $product->id) }}"
                         variant="warning">
@@ -229,6 +230,7 @@
                         </svg>
                         Edit Product
                     </x-ui.button>
+                    @endcan
 
                 </div>
 
