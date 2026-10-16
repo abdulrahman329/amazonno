@@ -4,6 +4,7 @@ namespace App\Http\Requests\Products;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Product;
 
 class StoreProductRequest extends FormRequest
 {
@@ -32,8 +33,8 @@ class StoreProductRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             
             'stock' => ['required', 'integer', 'min:0'],
-            
-            'images' => ['nullable', 'array', 'max:5'], 
+
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             
         ];
     }
