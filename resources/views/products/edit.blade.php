@@ -68,7 +68,7 @@
                         label="Product Name"
                         name="name"
                         placeholder="Enter product name"
-                        value="{{ old('name', $product->name) }}"
+                        :value="old('name', $product->name)"
                         required
                         autofocus
                     />
@@ -78,7 +78,7 @@
                         label="Description"
                         name="description"
                         type="textarea"
-                        value="{{ old('description', $product->description) }}"
+                        :value="old('description', $product->description)"
                         rows="4"
                         placeholder="Describe your product..."
                         required
