@@ -86,6 +86,7 @@
                             <x-ui.form 
                             action="{{ route('categories.destroy', $category->id) }}"
                             method="DELETE"
+                            onsubmit="return confirm('Are you sure you want to delete this category?')"
                             class="inline-flex flex-1">
                                 <x-ui.button type="submit" variant="danger" class="w-full">
                                     <svg xmlns="http://www.w3.org/2000/svg"

@@ -147,6 +147,7 @@
                             <x-ui.form 
                             action="{{ route('products.destroy', $product->id) }}"
                             method="DELETE"
+                            onsubmit="return confirm('Are you sure you want to delete this product?')"
                             class="inline-flex flex-1">
                                 <x-ui.button type="submit" variant="danger" class="w-full">
                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -173,7 +174,6 @@
 
                                 {{ $product->category?->name ?? 'Uncategorized' }}
                             </span>
-                            </x-ui.button>
                         </div>
                     </div>
                 </div>

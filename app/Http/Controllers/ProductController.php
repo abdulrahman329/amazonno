@@ -110,7 +110,7 @@ class ProductController extends Controller
                 $product->update($validatedData);
             }
         
-        return redirect()->route('products.index')->with('success', 'Product Updateed successfully.');
+        return redirect()->route('products.index')->with('success', 'Product Updated successfully.');
     }
 
     /**
