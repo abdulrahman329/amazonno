@@ -48,9 +48,13 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        $imagePaths = $user->products()->pluck('image');
+
         Auth::logout();
 
         $user->delete();
+        
+        $imagePaths->each(fn ($path) => deleteImage($path));
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
