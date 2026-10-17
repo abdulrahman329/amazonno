@@ -119,6 +119,7 @@
                                 </p>
                             </div>
                         </div>
+                        </x-ui.button>
 
                         {{-- Actions --}}
                         <div class="mt-6 flex gap-3 border-t border-gray-100 pt-4 dark:border-gray-700">
@@ -160,8 +161,8 @@
                                     </svg>
                                     Delete
                                 </x-ui.button>
-                                @endcan
                             </x-ui.form>
+                            @endcan
                         </div>
                         
                         {{-- Category --}}
