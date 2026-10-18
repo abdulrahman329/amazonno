@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\ProductImage;
 
 class ProfileController extends Controller
 {
@@ -48,13 +49,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        $imagePaths = $user->products()->pluck('image');
+        $imagePaths = ProductImage::whereIn('product_id', $user->products()->select('id'))->pluck('path');
 
         Auth::logout();
 
         $user->delete();
-        
-        $imagePaths->each(fn ($path) => deleteImage($path));
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
