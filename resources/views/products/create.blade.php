@@ -133,11 +133,13 @@
                         {{-- Product Image --}}
                         <x-ui.form-field
                             label="Product Image"
-                            name="image"
+                            name="images[]" 
+                            multiple accept="image/*"
                             type="file"
                             hint="Upload a JPG, JPEG, PNG, or GIF image (max 2 MB)."
                             required
                         /> 
+                        @error('images')   <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         
                         {{-- Actions --}}
                         <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
