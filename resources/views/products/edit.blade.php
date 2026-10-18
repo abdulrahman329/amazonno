@@ -130,28 +130,54 @@
                             />
                         </div>
                     </div>
-                    {{-- Change Product Image --}}
-                    <x-ui.form-field
-                        label="Change Product Image"
-                        name="image"
-                        type="file"
-                        hint="Choose a new image if you want to replace the current one. Maximum size: 2 MB."
-                    />
-                    {{-- Current Product Image --}}
-                    @if ($product->image)
-                        <div class="mb-6">
-                            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                                Current Product Image
-                            </label>
+                    {{-- Current Images --}}
+                        @if ($product->images->isNotEmpty())
+                            <div class="mb-6">
+                                <label class="mb-1 block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                    Current Images
+                                </label>
+                                <p class="mb-3 text-xs text-gray-500 dark:text-gray-400">
+                                    Click an image to mark it for removal.
+                                </p>
 
-                            <img
-                                src="{{ asset('storage/' . $product->image) }}"
-                                alt="{{ $product->name }}"
-                                class=" h-28 w-28 rounded-xl border border-gray-200 object-cover
-                                    dark:border-gray-700"
-                            >
-                        </div>
-                    @endif
+                                <div class="flex flex-wrap gap-4">
+                                    @foreach ($product->images as $image)
+                                        <label class="relative cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                name="remove_images[]"
+                                                value="{{ $image->id }}"
+                                                @checked(in_array($image->id, old('remove_images', [])))
+                                                class="peer sr-only"
+                                            >
+                                            <img
+                                                src="{{ asset('storage/' . $image->path) }}"
+                                                alt="{{ $product->name }}"
+                                                class="h-28 w-28 rounded-xl border border-gray-200 object-cover transition
+                                                    peer-checked:opacity-40 peer-checked:ring-2 peer-checked:ring-red-500
+                                                    dark:border-gray-700"
+                                            >
+                                            <span class="absolute inset-x-0 bottom-0 hidden rounded-b-xl bg-red-600/90 py-1
+                                                        text-center text-xs font-semibold text-white peer-checked:block">
+                                                Will be removed
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                    @error('images')   <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                    @error('images.*') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Add Images --}}
+                        <x-ui.form-field
+                            label="Add Images"
+                            name="images[]"
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            hint="Up to 5 images in total (2 MB each). The first one is the cover."
+                        />
                     
                     {{-- Actions --}}
                     <div class="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
