@@ -60,9 +60,14 @@
                     {{-- Product Image Placeholder --}}
                     <div class="relative flex h-48 items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700/50">
 
-                        @if ($product->image)
+                        @php
+                            // New table first; fall back to the old column for products not migrated yet
+                            $imagePath = $product->cover?->path ?? $product->image;
+                        @endphp
+
+                        @if ($imagePath)
                             <img
-                                src="{{ asset('storage/' . $product->image) }}"
+                                src="{{ asset('storage/' . $imagePath) }}"
                                 alt="{{ $product->name }}"
                                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                             >
