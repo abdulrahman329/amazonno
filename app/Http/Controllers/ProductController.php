@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Products\StoreProductRequest;
 use App\Http\Requests\Products\UpdateProductRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -18,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('user', 'category')
+        $products = Product::with('user', 'category', 'cover')
         ->latest()
         ->paginate(8);
     
@@ -43,25 +44,20 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $validatedData = $request->validated();
         
-        if ($request->hasFile('image')) {
-            $validatedData['image'] = storeImage($request->file('image'));
-        }
-
-        //     $images = [];
-
-        // if ($request->hasFile('images')) {
-        //     foreach ($request->file('images') as $image) {
-        //         $images[] = storeImage($image, 'products');
-        //     }
-        // }
-
-        // $validatedData['images'] = $images;
-
-        $validatedData['user_id'] = auth()->id();
-        
-        Product::create($validatedData);
+        DB::transaction(function () use ($request) {
+            $product = Product::create([
+                ...$request->safe()->except('images'),
+                'user_id' => $request->user()->id,
+            ]);
+    
+            foreach ($request->file('images') as $index => $file) {
+                $product->images()->create([
+                    'path'       => storeImage($file, 'products'),
+                    'sort_order' => $index,
+                ]);
+            }
+        });
         
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
@@ -71,7 +67,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load('user', 'category');
+        $product->load('user', 'category','images');
 
         return view('products.show', compact('product'));
     }
@@ -93,24 +89,40 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $validatedData = $request->validated();
+        // Only this product's images can be removed, even if someone sends other ids
+        $toRemove = $product->images()
+            ->whereIn('id', $request->input('remove_images', []))
+            ->get();
 
-        if ($request->hasFile('image')) {
-        
-            // Store the new image and get the path
-            $oldImage = $product->getRawOriginal('image');
-            
-            // Store the new image and update the validated data with the new image path
-            $validatedData['image'] = storeImage($request->file('image'));
-            
-            $product->update($validatedData);  // if this throws, we stop here —
-                // old file is still intact, nothing broken
-                deleteImage($oldImage); // only reached if the update succeeded
-            } else {
-                $product->update($validatedData);
+        $newFiles = $request->file('images', []);
+
+        $total = $product->images()->count() - $toRemove->count() + count($newFiles);
+
+        if ($total < 1 || $total > 5) {
+            return back()
+                ->withInput()
+                ->withErrors(['images' => 'A product must have between 1 and 5 images.']);
+        }
+
+        DB::transaction(function () use ($request, $product, $toRemove, $newFiles) {
+            $product->update($request->safe()->except(['images', 'remove_images']));
+
+            $next = ($product->images()->max('sort_order') ?? -1) + 1;
+
+            foreach ($newFiles as $file) {
+                $product->images()->create([
+                    'path'       => storeImage($file, 'products'),
+                    'sort_order' => $next++,
+                ]);
             }
-        
-        return redirect()->route('products.index')->with('success', 'Product Updated successfully.');
+
+            $product->images()->whereIn('id', $toRemove->pluck('id'))->delete();
+        });
+
+        // Files are deleted only after the database work succeeded
+        $toRemove->each(fn ($image) => deleteImage($image->path));
+
+        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -118,13 +130,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorize('delete', $product); 
+        $this->authorize('delete', $product);
 
-        $imagepath = $product->getRawOriginal('image');
+        $paths = $product->images()->pluck('path');
 
-        $product->delete();
+        $product->delete();   // the database cascade removes the image rows
 
-        deleteImage($imagepath);
+        $paths->each(fn ($path) => deleteImage($path));
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
