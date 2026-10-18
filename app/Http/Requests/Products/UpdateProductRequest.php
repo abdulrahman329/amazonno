@@ -33,7 +33,14 @@ class UpdateProductRequest extends FormRequest
             
             'stock' => ['required', 'integer', 'min:0'],
 
-            'image' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'images' => ['sometimes', 'array', 'max:5'],
+
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+
+            'remove_images' => ['sometimes', 'array'],
+
+            'remove_images.*' => ['integer'],
+
         ];
     }
 }
