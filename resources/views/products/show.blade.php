@@ -80,41 +80,65 @@
                 {{-- Product Content --}}
                 <div class="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-2">
 
-                    {{-- Product Image --}}
-                    <div>
-                        <h4 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-                            Product Image
-                        </h4>
+                {{-- Product Images --}}
+                <div>
+                    <h4 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+                        Product Images
+                    </h4>
 
-                        <div class="flex min-h-72 items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+                    @php
+                        // New table first; fall back to the old column for products not migrated yet
+                        $urls = $product->images
+                            ->map(fn ($img) => asset('storage/' . $img->path))
+                            ->all();
 
-                            @if ($product->image)
+                        if (! $urls && $product->image) {
+                            $urls = [asset('storage/' . $product->image)];
+                        }
+                    @endphp
+
+                    @if ($urls)
+                        <div x-data="{ active: @js($urls[0]) }">
+
+                            {{-- Big image --}}
+                            <div class="flex min-h-72 items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
                                 <img
-                                    src="{{ asset('storage/' . $product->image) }}"
+                                    :src="active"
                                     alt="{{ $product->name }}"
                                     class="h-72 w-full object-contain sm:h-96"
                                 >
-                            @else
-                                <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.2"
-                                        stroke="currentColor"
-                                        class="h-20 w-20">
-                                        <path stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25m0-9L3 7.5m9 5.25v9m-9-14.25v9l9 5.25" />
-                                    </svg>
+                            </div>
 
-                                    <p class="mt-3 text-sm">
-                                        No image available
-                                    </p>
+                            {{-- Thumbnails (only when there is more than one image) --}}
+                            @if (count($urls) > 1)
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    @foreach ($urls as $url)
+                                        <button
+                                            type="button"
+                                            @click="active = @js($url)"
+                                            class="overflow-hidden rounded-lg border-2 transition"
+                                            :class="active === @js($url)
+                                                ? 'border-amber-500'
+                                                : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'">
+                                            <img src="{{ $url }}" alt="" class="h-16 w-16 object-cover">
+                                        </button>
+                                    @endforeach
                                 </div>
                             @endif
-
                         </div>
-                    </div>
+                    @else
+                        <div class="flex min-h-72 items-center justify-center overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+                            <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.2" stroke="currentColor" class="h-20 w-20">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25m0-9L3 7.5m9 5.25v9m-9-14.25v9l9 5.25" />
+                                </svg>
+                                <p class="mt-3 text-sm">No image available</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
 
                     {{-- Product Information --}}
                     <div class="flex flex-col">
