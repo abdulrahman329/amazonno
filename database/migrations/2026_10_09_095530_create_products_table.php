@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedInteger('stock')->default(0);
             $table->foreignid('category_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
