@@ -6,215 +6,146 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\File;
+use Illuminate\Support\Arr;
+use Faker\Factory as Faker;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = Category::all();
-        $users = User::pluck('id')->all();
+        $users = User::pluck('id');
 
-        if ($categories->isEmpty() || empty($users)) {
-            $this->command->error(
-                'Please seed users and categories first.'
+        if ($users->isEmpty()) {
+            throw new \RuntimeException(
+                'Please seed at least one user before running ProductSeeder.'
             );
-            return;
         }
 
-        $catalog = $this->catalog();
-        $available = [];
-        $disk = Storage::disk('public');
+        $faker = Faker::create('en_US');
+        
+        $descriptions = $this->descriptions();
 
-        foreach ($categories as $category) {
-            $slug = Str::slug($category->name);
-            $folder = "products/{$slug}";
+        $priceRanges = $this->priceRanges();
 
-            $images = $disk->exists($folder)
-                ? collect($disk->files($folder))
-                    ->filter(fn ($path) => preg_match(
-                        '/\.(jpg|jpeg|png|webp)$/i',
-                        $path
-                    ))
-                    ->values()
-                    ->all()
-                : [];
+        foreach (Category::all() as $category) {
+            $key = Str::slug($category->name);
 
-            if (empty($images)) {
-                $this->command->warn(
-                    "No images found for category: {$category->name}"
+            $folder = database_path('seeders/images/' . $key);
+
+            if (!is_dir($folder)) {
+                $this->command?->warn(
+                    "Image folder not found: {$folder}"
                 );
                 continue;
             }
 
-            $available[] = [
-                'category' => $category,
-                'images' => $images,
-                'profile' => $this->profileFor(
-                    $category->name,
-                    $catalog
-                ),
-            ];
-        }
+            $texts = $descriptions[$key]
+                ?? $descriptions['general'];
 
-        if (empty($available)) {
-            $this->command->error(
-                'No category images found. Please add images to storage/app/public/products/{category-slug}.'
+            [$min, $max] = $priceRanges[$key] ?? [10, 500];
+
+            $files = glob(
+                "$folder/*.{jpg,jpeg,png,webp}",
+                GLOB_BRACE
             );
-            return;
-        }
 
-        DB::transaction(function () use ($available, $users) {
-            for ($i = 0; $i < 50; $i++) {
-                $item = $available[$i % count($available)];
+            foreach ($files as $file) {
+                $name = Str::headline(
+                    pathinfo($file, PATHINFO_FILENAME)
+                );
 
-                $category = $item['category'];
-                $profile = $item['profile'];
-
-                $productData = $profile['products'][
-                    intdiv($i, count($available))
-                    % count($profile['products'])
-                ];
-
-                $imagePath = $item['images'][
-                    intdiv($i, count($available))
-                    % count($item['images'])
-                ];
+                // Skip products that already exist in this category
+                if (
+                    Product::where('name', $name)
+                        ->where('category_id', $category->id)
+                        ->exists()
+                ) {
+                    $this->command?->info(
+                        "Skipping existing product: {$name}"
+                    );
+                    continue;
+                }
 
                 $product = Product::create([
-                    'name' => $productData['name'],
-                    'description' => $productData['description'],
-                    'price' => $productData['price'],
-                    'stock' => fake()->numberBetween(0, 999),
+                    'name' => $name,
+                    'description' => $name . ': ' . Arr::random($texts),
+                    'price' => $faker->randomFloat(2, $min, $max),
+                    'stock' => $faker->numberBetween(0, 200),
                     'category_id' => $category->id,
-                    'user_id' => $users[$i % count($users)],
+                    'user_id' => $users->random(),
                 ]);
 
+                $path = Storage::disk('public')->putFile(
+                    'products',
+                    new File($file)
+                );
+
+                if (!$path) {
+                    throw new \RuntimeException(
+                        "Failed to store image: {$file}"
+                    );
+                }
+
                 $product->images()->create([
-                    'path' => $imagePath,
+                    'path' => $path,
                     'sort_order' => 0,
                 ]);
             }
-        });
-
-        $this->command->info(
-            '50 products created successfully!'
-        );
+        }
     }
 
-    private function profileFor(
-        string $categoryName,
-        array $catalog
-    ): array {
-        $name = Str::lower($categoryName);
-
-        foreach ($catalog as $keywords => $profile) {
-            foreach (explode('|', $keywords) as $keyword) {
-                if (Str::contains($name, $keyword)) {
-                    return $profile;
-                }
-            }
-        }
-
+    private function descriptions(): array
+    {
         return [
-            'products' => [
-                [
-                    'name' => "Premium {$categoryName} Collection",
-                    'description' =>
-                        "Discover our {$categoryName} collection, " .
-                        'featuring practical designs and contemporary style.',
-                    'price' => 199.00,
-                ],
-                [
-                    'name' => "Essential {$categoryName} Edition",
-                    'description' =>
-                        "Explore our {$categoryName} essentials, " .
-                        'designed for everyday convenience and versatility.',
-                    'price' => 299.00,
-                ],
+            'electronics' => [
+                'Reliable performance and a modern design, built for everyday use.',
+                'A well-made device with a clear display and a long battery life.',
+                'Compact, fast, and easy to use at home, at work, or on the go.',
+                'Designed to provide a smooth and convenient everyday experience.',
+                'A practical choice for users looking for quality and simplicity.',
+                'Combines useful features with a clean and modern appearance.',
+                'Built to fit easily into your daily routine.',
+            ],
+
+            'clothing' => [
+                'Comfortable fabric and a relaxed fit, easy to wear every day.',
+                'A versatile piece that works with most outfits.',
+                'Designed for everyday comfort with a simple and timeless style.',
+                'An easy choice for creating a clean and casual look.',
+                'Made to offer a comfortable feel and a stylish appearance.',
+                'A simple design that fits a variety of occasions.',
+                'Easy to pair with other pieces for a complete outfit.',
+            ],
+
+            'furniture' => [
+                'Solid construction and a clean design that suits most rooms.',
+                'Comfortable, durable, and easy to place in any space.',
+                'A practical addition that blends naturally with different interiors.',
+                'Designed to balance everyday functionality with a modern look.',
+                'A versatile piece that works well in a variety of spaces.',
+                'Simple styling makes it easy to match with existing furniture.',
+                'A useful choice for creating a comfortable and organized space.',
+            ],
+
+            'general' => [
+                'Made to provide a convenient experience without unnecessary complexity.',
+                'Carefully designed to fit different lifestyles and personal preferences.',
+                'A straightforward choice for anyone who values convenience and simplicity.',
+                'Suitable for different preferences thanks to its simple and versatile style.',
+                'An appealing option for those who prefer practical and uncomplicated products.',
             ],
         ];
     }
 
-    private function catalog(): array
+    private function priceRanges(): array
     {
         return [
-            'electronics|electronic' => [
-                'products' => [
-                    [
-                        'name' => 'iPhone 16 Pro',
-                        'description' => 'Experience powerful performance, an advanced camera system, and a premium display in a sleek smartphone designed for everyday use.',
-                        'price' => 4499.00,
-                    ],
-                    [
-                        'name' => 'Wireless Noise-Cancelling Headphones',
-                        'description' => 'Enjoy immersive audio, comfortable ear cushions, and wireless convenience for music, calls, and travel.',
-                        'price' => 899.00,
-                    ],
-                    [
-                        'name' => 'Ultra-Slim Laptop',
-                        'description' => 'A lightweight laptop designed for productivity, multitasking, and entertainment at home, work, or on the go.',
-                        'price' => 3299.00,
-                    ],
-                    [
-                        'name' => 'Smart Watch Series',
-                        'description' => 'Stay connected with a modern smartwatch featuring activity tracking, convenient notifications, and a versatile everyday design.',
-                        'price' => 699.00,
-                    ],
-                ],
-            ],
-
-            'clothing|fashion|apparel' => [
-                'products' => [
-                    [
-                        'name' => 'Classic Cotton T-Shirt',
-                        'description' => 'A timeless cotton T-shirt featuring a comfortable fit and versatile styling for everyday wear.',
-                        'price' => 79.00,
-                    ],
-                    [
-                        'name' => 'Premium Casual Jacket',
-                        'description' => 'A contemporary jacket with a versatile silhouette, perfect for layering and creating effortless everyday outfits.',
-                        'price' => 249.00,
-                    ],
-                    [
-                        'name' => 'Everyday Sneakers',
-                        'description' => 'Modern casual sneakers combining versatile styling with everyday comfort for a variety of occasions.',
-                        'price' => 199.00,
-                    ],
-                    [
-                        'name' => 'Minimalist Shoulder Bag',
-                        'description' => 'A stylish shoulder bag designed to organize everyday essentials while complementing a wide range of outfits.',
-                        'price' => 159.00,
-                    ],
-                ],
-            ],
-
-            'furniture|home|decor' => [
-                'products' => [
-                    [
-                        'name' => 'Modern Accent Chair',
-                        'description' => 'A contemporary accent chair designed to bring comfort and understated elegance to living rooms and reading corners.',
-                        'price' => 799.00,
-                    ],
-                    [
-                        'name' => 'Minimalist Work Desk',
-                        'description' => 'A clean-lined desk offering a practical workspace for studying, working, and organizing everyday essentials.',
-                        'price' => 599.00,
-                    ],
-                    [
-                        'name' => 'Contemporary Coffee Table',
-                        'description' => 'A versatile coffee table that adds functional surface space and a refined touch to modern living areas.',
-                        'price' => 399.00,
-                    ],
-                    [
-                        'name' => 'Modern Lounge Sofa',
-                        'description' => 'A contemporary lounge sofa designed to complement modern interiors and create a welcoming living space.',
-                        'price' => 2499.00,
-                    ],
-                ],
-            ],
+            'electronics' => [1000, 8999],
+            'clothing'    => [150, 500],
+            'furniture'   => [500, 3000],
         ];
     }
 }
