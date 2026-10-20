@@ -17,13 +17,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::with('user', 'category', 'cover')
+        ->when($request->filled('category'), fn ($q) => $q->where('category_id', $request->category))
+        ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%' . $request->search . '%'))
         ->latest()
         ->paginate(8);
+
+        $categories = Category::orderBy('name')->get();
     
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'categories'));
     
     }
 

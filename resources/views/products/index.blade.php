@@ -43,6 +43,30 @@
                         Showing {{ $products->count() }} products on this page
                     </p>
                 </div>
+                {{-- Products search and category filtering --}}
+                <x-ui.form method="GET" action="{{ route('products.index') }}"
+                    class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Search products..."
+                        class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white sm:max-w-xs">
+
+                    <select name="category"
+                            class="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <option value="">All categories</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" @selected(request('category') == $category->id)>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <x-ui.button type="submit" variant="warning">Search</x-ui.button>
+
+                    @if (request()->hasAny(['search', 'category']))
+                        <a href="{{ route('products.index') }}" class="text-sm text-gray-500 hover:text-amber-600">Clear</a>
+                    @endif
+                </x-ui.form>
             </div>
 
             {{-- Products Grid --}}
