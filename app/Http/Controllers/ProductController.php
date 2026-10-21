@@ -19,16 +19,26 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::with('user', 'category', 'cover')
-        ->when($request->filled('category'), fn ($q) => $q->where('category_id', $request->category))
-        ->when($request->filled('search'), fn ($q) => $q->where('name', 'like', '%' . $request->search . '%'))
-        ->latest()
-        ->paginate(8);
+        $filters = $request->validate([
+            'search'   => ['nullable', 'string', 'max:100'],
+            'category' => ['nullable', 'integer'],
+        ]);
+
+        $products = Product::with('category', 'cover')
+            ->when(
+                $filters['category'] ?? null,
+                fn ($q, $category) => $q->where('category_id', $category)
+            )
+            ->when(
+                $filters['search'] ?? null,
+                fn ($q, $search) => $q->where('name', 'like', '%' . $search . '%')
+            )
+            ->latest()
+            ->paginate(8);
 
         $categories = Category::orderBy('name')->get();
-    
+
         return view('products.index', compact('products', 'categories'));
-    
     }
 
     /**
