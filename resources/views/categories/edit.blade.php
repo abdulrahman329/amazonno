@@ -67,7 +67,7 @@
                             label="Category Name"
                             name="name"
                             placeholder="Enter Category name"
-                            value="{{ old('name', $category->name) }}"
+                            :value="old('name', $category->name)"
                             required
                             autofocus
                         />
