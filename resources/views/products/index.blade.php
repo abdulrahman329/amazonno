@@ -78,23 +78,17 @@
 
                 <div class="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
 
-                    <x-ui.button
-                        href="{{ route('products.show', $product->id) }}" variant="empty">
+                    <x-ui.button href="{{ route('products.show', $product->id) }}">
 
                     {{-- Product Image Placeholder --}}
                     <div class="relative flex h-48 items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700/50">
 
-                        @php
-                            // New table first; fall back to the old column for products not migrated yet
-                            $imagePath = $product->cover?->path ?? $product->image;
-                        @endphp
-
-                        @if ($imagePath)
+                        @if ($product->cover_image_url)
                             <img
-                                src="{{ asset('storage/' . $imagePath) }}"
+                                src="{{ $product->cover_image_url }}"
                                 alt="{{ $product->name }}"
                                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                            >
+                            >   
                         @else
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
